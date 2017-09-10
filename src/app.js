@@ -12,9 +12,11 @@ const app = {
 const returnOptions = (options)=>{
   if(options){
     return(
-      <ol>
-        {options.map((i, index)=><li style={optionsInputStyle} key={index}>{i}</li>)}
-      </ol>
+      <div style={divStyle}>
+        <ol>
+          {options.map((i, index)=><li style={optionsInputStyle} key={index}>{i}</li>)}
+        </ol>
+      </div>
     )
   }else{
     return "No options available";
@@ -36,7 +38,14 @@ const onFormSubmit = (e)=>{
     renderIndecisionApp();
   }
 }
+const divStyle = {
+  maxWidth: '50%',
+  margin: '0 auto',
+  textAlign:'center',
+  padding: '0',
+  fontFamily: 'Helvetica, Arial, sans-serif'
 
+}
 const optionsStyle = {
   fontSize:'1.2rem', 
   fontFamily:'Arial', 
@@ -74,7 +83,7 @@ const onMakeDecision = ()=> {
 }
 const renderIndecisionApp = ()=>{
   const template = (
-  <div>
+  <div style={divStyle}>
     {app.title && <h1 style={headerStyle} >{app.title}</h1>}
     <p style={optionsStyle}><strong>{app.subtitle ? app.subtitle : 'No subtitle'}</strong></p>
     <p style={optionsStyle}>{app.options.length > 0 ? 'Here are your options': 'No options'}</p>
