@@ -1,107 +1,112 @@
-console.log("TEST");
 
-// Styles Import
-// import {optionsStyle, headerStyle, formStyle} from './styles';
-const app = {
-  title:"Indecision App",
-  subtitle:"Put your life in the computer's hands.",
-  options:
-  ['React Guru', 'Redux Master', 'Sass Virtuoso']
-}
+class IndecisionApp extends React.Component{
+  constructor(){
+    super()
 
-const returnOptions = (options)=>{
-  if(options){
-    return(
-      <div style={divStyle}>
-        <ol>
-          {options.map((i, index)=><li style={optionsInputStyle} key={index}>{i}</li>)}
-        </ol>
+  }
+  render(){
+
+    const title = "Indecision";
+    const subtitle="Put your life in the hands of a computer!";
+    const options = ['ReactJS', 'Redux', 'SASS']
+    return (
+      <div>
+        <Header title={title} subtitle={subtitle}/>
+        <Action />
+        <Options options={options} />
+        <AddOption />
       </div>
     )
-  }else{
-    return "No options available";
-  }
-
-}
-
-const onFormSubmit = (e)=>{
-  e.preventDefault();
-  const option = e.target.elements.option.value;
-  const wipeout = e.target.elements.wipeout;
-
-  if(option){
-    app.options.push(option);
-    renderIndecisionApp();
-    e.target.elements.option.value = '';
-  }else if(wipeout){
-    app.options = [];
-    renderIndecisionApp();
   }
 }
-const divStyle = {
-  maxWidth: '50%',
-  margin: '0 auto',
-  textAlign:'center',
-  padding: '0',
-  fontFamily: 'Helvetica, Arial, sans-serif'
 
-}
-const optionsStyle = {
-  fontSize:'1.2rem', 
-  fontFamily:'Arial', 
-  textAlign:'center',
-  fontWeight: '600',
-  listStyleType: 'none'
-}
-const optionsInputStyle = {
-  fontSize:'1.2rem', 
-  fontFamily:'Arial', 
-  textAlign:'left',
-  fontWeight: '600',
-}
-const headerStyle = {
-  fontSize:'2rem', 
-  fontFamily:'Arial', 
-  textAlign:'center',
-  fontWeight: '800'
-}
-const formStyle = {
-  fontSize:'1rem',
-  padding: '0',
-  margin:'0 auto', 
-  fontFamily:'Arial', 
-  textAlign:'center',
-  fontWeight: '600'
-}
-const buttonStyle ={border:'none', display:'block', background:'red', textAlign:'center', color: 'white', borderRadius:'15px', margin:'5px auto'}
-const appRoot = document.querySelector("#app");
 
-const onMakeDecision = ()=> {
-  const randomNum =Math.floor(Math.random()*app.options.length);
-  const option = app.options[randomNum]
- alert(option);
+class Header extends React.Component{
+  render(){
+    return(
+      <div>
+        <h1>{this.props.title}</h1>
+        <h2>{this.props.subtitle}</h2>
+      </div>
+    )
+  }
 }
-const renderIndecisionApp = ()=>{
-  const template = (
-  <div style={divStyle}>
-    {app.title && <h1 style={headerStyle} >{app.title}</h1>}
-    <p style={optionsStyle}><strong>{app.subtitle ? app.subtitle : 'No subtitle'}</strong></p>
-    <p style={optionsStyle}>{app.options.length > 0 ? 'Here are your options': 'No options'}</p>
-    <p 
-      style={optionsStyle}>
-      {app.options.length >0 ? `Options count ${app.options.length}` : null}</p>
-      {returnOptions(app.options)}
-      <button type="button" disabled={app.options.length === 0} style={buttonStyle} onClick={onMakeDecision}>Make Decision</button>
-    <form style={formStyle} onSubmit={onFormSubmit}>
-      <input type="text" name="option"/>
-      <button type="submit">Add Options</button>
-      <button name="wipeout" style={buttonStyle} type="submit">Wipe Out</button>
-    </form>
-</div>
-  )
 
-ReactDOM.render(template,appRoot);
+class Action extends React.Component{
+  //class based method
+  handlePick(){
+    alert('clicked Add Option')
+  }
+  render(){
+    return(
+      <div>
+        <button onClick={this.handlePick}>
+          What did I do?
+        </button>
+      </div>
+    )
+  }
 }
 
 
-renderIndecisionApp();
+class Options extends React.Component {
+  constructor(props){
+    super(props)
+    this.handleRemoveAll = this.handleRemoveAll.bind(this);
+  }
+  handleRemoveAll(){
+    console.log(this.props.options)
+    // alert('Remove all buttons')
+  }
+  render(){
+    return(
+      <div>
+        <button onClick={this.handleRemoveAll}>Remove All</button>
+        {
+          this.props.options.map((option)=>{
+            return <Option key={option} optionText={option} />
+          })
+        }
+      </div>
+    )
+  }
+}
+
+
+class AddOption extends React.Component{
+
+  handleAddOption(e){
+    e.preventDefault();
+    let optionValue = e.target.elements.optionValue.value.trim();
+
+    if(!optionValue){
+      alert('You must add an option to submit');
+    }else{
+      alert('New option added!');
+      e.target.elements.optionValue.value = '';
+    }
+  }
+  render(){
+    return(
+      <div>    
+        <form onSubmit={this.handleAddOption.bind(this)}>
+          <input type="text" name="optionValue"/>
+          <button type="submit">Add Option</button>
+        </form>
+      </div>
+    )
+  }
+}
+
+
+class Option extends React.Component{
+  render(){
+    return(
+      <div>
+       <p>{this.props.optionText}</p>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<IndecisionApp />, document.getElementById("app"));
