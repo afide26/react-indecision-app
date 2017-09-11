@@ -13,33 +13,39 @@ const showDetails = {
   padding: '10px',
   maxWidth: '80%',
   fontFamily:'Arial',
-  backgroundColor: 'rgba(255,0,255,0.6)',
+  backgroundColor: 'rgba(0,255,55,0.6)',
   opacity: '1',
   transition: '0.3s ease-out'
 }
 
-let visibility = true;
-const toggleVisibility = ()=>{
-  visibility = !visibility;
-  renderVisibilityToggle();
-}
 
-const appRoot = document.querySelector("#app");
+class VisibilityToggle extends React.Component{
+  constructor(props){
+    super(props)
+    this.state = {visibility: false}
+    this.handleToggleVisibility = this.handleToggleVisibility.bind(this);
+  }
 
-
-const renderVisibilityToggle = ()=>{
-  const template = (
-    <div style={divStyle} >
+  handleToggleVisibility(){
+    this.setState((prevState)=>{
+      return{
+        visibility: !prevState.visibility
+      }
+    })
+  }
+  render(){
+    return(
+     <div style={divStyle} >
       <h1>Visibility Toggle</h1>
-      <button onClick={toggleVisibility} >
-        {visibility ? 'Hide Details' : 'Show Details'}
+      <button onClick={this.handleToggleVisibility} >
+        {this.state.visibility ? 'Hide Details' : 'Show Details'}
       </button>
-      {visibility && (
+      {this.state.visibility && (
         <div style={showDetails}>Here are some details you can now see.</div>
       )}
-    </div>
-  )
-  ReactDOM.render(template, appRoot);
+    </div>     
+    )
+  }
 }
 
-renderVisibilityToggle();
+ReactDOM.render(<VisibilityToggle />, document.querySelector("#app"));
