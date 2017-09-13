@@ -4,13 +4,17 @@ const wrapperStyle ={
   fontFamily:'Helvetica, Arial, sans-serif'
 }
 const errorStyle = {
-  backgroundColor:'rgba(255,0,0,0.5)',
+  backgroundColor:'#ff7f7f',
   padding:'15px',
   maxWidth: '100%',
-  margin:'10px auto',
+  top:'0',
+  left:'0',
   textAlign:'center',
   position:'relative',
-  transition:'all ease-out 3s'
+  transition:'all ease-out 3s',
+  clear:'both',
+  display:'table',
+  content:''
 };
 
 const xStyle={
@@ -23,55 +27,78 @@ const xStyle={
   cursor:'pointer'
 }
 
+const buttonStyle={
+  minWidth: '100px',
+  padding: '3px',
+  borderRadius: '12px',
+  margin:'15px 3px',
+  float:'left',
+  backgroundColor:"rgba(0, 255,0,0.5)",
+  border: '1px solid gray'
+}
+
+const clearFix = {
+  clear:'both',
+  display:'table',
+  content:''
+}
 class IndecisionApp extends React.Component{
   constructor(props){
     super(props)
     this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
     this.handleAddOption = this.handleAddOption.bind(this);
     this.handlePickOptions = this.handlePickOptions.bind(this);
+    this.handleDeleteOption = this.handleDeleteOption.bind(this);
     this.state = {
-      options: []
+      options: props.options
     } 
   }
+
   handlePickOptions(){
     let randomOption = Math.floor(Math.random()* this.state.options.length);
     alert([this.state.options[randomOption]]);
     let pickedOption = this.state.options[randomOption];
   }
+
   handleDeleteOptions (){
-    this.setState(()=>{
+    this.setState(()=>({options:[]}))
+  }
+
+  handleDeleteOption(optionText){
+    this.setState((prevState)=>{
       return{
-        options:[]
+        options:prevState.options.filter((option)=> optionText !== option)
       }
     })
   }
 
   handleAddOption (optionValue){
+
+    let optionLowerCased = this.state.options.map((option)=> option.toLowerCase());
     if(!optionValue){
       return 'You need to add an option';
-    }else if(this.state.options.indexOf(optionValue)> -1){
+    }else if(optionLowerCased.indexOf(optionValue.toLowerCase())> -1){
       return 'That option is already in the list';
     }
 
-    this.setState((prevState)=>{
-      return{
-        options: [...prevState.options, optionValue]
-      }
-    })
+    this.setState((prevState)=>({
+      options:[...prevState.options, optionValue]
+    }))
   }
 
   render(){
-    const title = "Indecision";
-    const subtitle="Put your life in the hands of a computer!";
+    const subtitle="Putting your life in the hands of a computer!";
     return (
       <div style={wrapperStyle}>
-        <Header title={title} subtitle={subtitle}/>
+        <Header subtitle={subtitle}/>
         <h3>{this.state.options.length ? `Tasks: ${this.state.options.length}` : ''}</h3>
         <Action 
           hasOptions={this.state.options.length > 0} 
-          handlePickOptions={this.handlePickOptions}/>
+          handlePickOptions={this.handlePickOptions}
+         />
         <Options 
            options={this.state.options}
+           handleDeleteOption ={this.handleDeleteOption}
            handleDeleteOptions = {this.handleDeleteOptions}/>
         <AddOption handleAddOption ={this.handleAddOption} />
       </div>
@@ -79,46 +106,54 @@ class IndecisionApp extends React.Component{
   }
 }
 
-
-class Header extends React.Component{
-  render(){
-    return(
-      <div>
-        <h1>{this.props.title}</h1>
-        <h2>{this.props.subtitle}</h2>
-      </div>
-    )
-  }
+IndecisionApp.defaultProps = {
+  options:['ReactJS', 'Redux', 'NodeJS', 'SASS', 'Gulp', 'Grunt', 'Webpack']
 }
 
-class Action extends React.Component{
-  render(){
+const Header = (props)=>{
     return(
       <div>
-        <button onClick={this.props.handlePickOptions} 
-          disabled={!this.props.hasOptions}>
+        <h1>{props.title}</h1>
+        {props.subtitle && <h2>{props.subtitle}</h2>}
+      </div>
+    )
+}
+
+Header.defaultProps = {
+  title:'Indecision App'
+}
+const Action = (props)=>{
+    return(
+      <div>
+        <button style={buttonStyle} onClick={props.handlePickOptions} 
+          disabled={!props.hasOptions}>
           What did I do?
         </button>
       </div>
     )
-  }
 }
 
 
-class Options extends React.Component {
-  render(){
+const Options =(props)=>{
     return(
       <div>
-        <button onClick={this.props.handleDeleteOptions}>Remove All</button>
+        <button style={buttonStyle} onClick={props.handleDeleteOptions}>
+          {props.options.length > 0 ? 'Remove All' : 'No options to remove'}
+        </button>
         {
-          this.props.options.map((option)=>{
-            return <Option key={option} optionText={option} />
-          })
+          props.options.map((option,index)=>(
+            <Option 
+              key={index} 
+              index={index} 
+              optionText={option}
+              handleDeleteOption = {props.handleDeleteOption} />
+            )
+          )
         }
       </div>
     )
-  }
 }
+
 
 
 class AddOption extends React.Component{
@@ -132,22 +167,14 @@ class AddOption extends React.Component{
   }
 
   removeError(){
-    this.setState(()=>{
-      return{
-        error:null
-      }
-    })
+    this.setState(()=>({error:null}));
   }
   onAddOption(e){
     e.preventDefault();
     let optionValue = e.target.elements.optionValue.value.trim();
     let error = this.props.handleAddOption(optionValue);
-   
-    this.setState(()=>{
-      return{
-        error
-      }
-    });
+
+    this.setState(()=>({error}));
 
      e.target.elements.optionValue.value = '';
 
@@ -159,7 +186,7 @@ class AddOption extends React.Component{
         {this.state.error && 
           <p style={errorStyle}>{this.state.error}
           <span onClick={this.removeError} style={xStyle}>x</span></p> }   
-        <form onSubmit={this.onAddOption}>
+        <form style={clearFix} onSubmit={this.onAddOption}>
           <input type="text" name="optionValue"/>
           <button type="submit">Add Option</button>
         </form>
@@ -168,15 +195,14 @@ class AddOption extends React.Component{
   }
 }
 
+const Option = (props)=>(
+  <div>
+    <p style={props.index==0 ? clearFix : null} >{props.index+1}. {props.optionText}
+    <button style={{ backgroundColor:'red', transform:'scaleX(1.2)', marginLeft: '15px', color:'white' }} onClick={(e)=> props.handleDeleteOption(props.optionText)}>remove</button>
+    </p>
+  </div>
+)
 
-class Option extends React.Component{
-  render(){
-    return(
-      <div>
-       <p>{this.props.optionText}</p>
-      </div>
-    )
-  }
-}
+
 
 ReactDOM.render(<IndecisionApp />, document.getElementById("app"));
