@@ -50,10 +50,46 @@ class IndecisionApp extends React.Component{
     this.handlePickOptions = this.handlePickOptions.bind(this);
     this.handleDeleteOption = this.handleDeleteOption.bind(this);
     this.state = {
-      options: props.options
+      options: []
     } 
   }
 
+  componentDidMount(){
+
+    try{
+      //Run the code below when componentDidMount
+        const json = localStorage.getItem('options');
+        const options = JSON.parse(json);
+
+        // Only change the state if the options array is not empty
+        if(options){
+          this.setState(()=>{
+            return{
+              options:options
+            }
+          })
+        }
+      //When there are errors when the code ran, catch will take effect
+    }catch(e){
+      //In this application, do nothing
+      //Just revert the options to being an empty array;
+    }
+
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if(prevState.options.length !== this.state.options.length){
+      const json = JSON.stringify(this.state.options);
+      localStorage.setItem('options', json)
+      console.log(json);
+    }
+    
+  }
+
+  componentWillUnmount(){
+    console.log('The component unmounted');
+    //localStorage.removeItem('options');
+  }
   handlePickOptions(){
     let randomOption = Math.floor(Math.random()* this.state.options.length);
     alert([this.state.options[randomOption]]);
@@ -107,7 +143,7 @@ class IndecisionApp extends React.Component{
 }
 
 IndecisionApp.defaultProps = {
-  options:['ReactJS', 'Redux', 'NodeJS', 'SASS', 'Gulp', 'Grunt', 'Webpack']
+  options:[] //['ReactJS', 'Redux', 'NodeJS', 'SASS', 'Gulp', 'Grunt', 'Webpack']
 }
 
 const Header = (props)=>{
@@ -175,10 +211,10 @@ class AddOption extends React.Component{
     let error = this.props.handleAddOption(optionValue);
 
     this.setState(()=>({error}));
-
-     e.target.elements.optionValue.value = '';
-
     
+    if(!error){
+      e.target.elements.optionValue.value = '';
+    } 
   }
   render(){
     return(

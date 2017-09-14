@@ -68,12 +68,50 @@ var IndecisionApp = function (_React$Component) {
     _this.handlePickOptions = _this.handlePickOptions.bind(_this);
     _this.handleDeleteOption = _this.handleDeleteOption.bind(_this);
     _this.state = {
-      options: props.options
+      options: []
     };
     return _this;
   }
 
   _createClass(IndecisionApp, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+
+      try {
+        //Run the code below when componentDidMount
+        var json = localStorage.getItem('options');
+        var options = JSON.parse(json);
+
+        // Only change the state if the options array is not empty
+        if (options) {
+          this.setState(function () {
+            return {
+              options: options
+            };
+          });
+        }
+        //When there are errors when the code ran, catch will take effect
+      } catch (e) {
+        //In this application, do nothing
+        //Just revert the options to being an empty array;
+      }
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate(prevProps, prevState) {
+      if (prevState.options.length !== this.state.options.length) {
+        var json = JSON.stringify(this.state.options);
+        localStorage.setItem('options', json);
+        console.log(json);
+      }
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      console.log('The component unmounted');
+      //localStorage.removeItem('options');
+    }
+  }, {
     key: 'handlePickOptions',
     value: function handlePickOptions() {
       var randomOption = Math.floor(Math.random() * this.state.options.length);
@@ -147,7 +185,7 @@ var IndecisionApp = function (_React$Component) {
 }(React.Component);
 
 IndecisionApp.defaultProps = {
-  options: ['ReactJS', 'Redux', 'NodeJS', 'SASS', 'Gulp', 'Grunt', 'Webpack']
+  options: [] //['ReactJS', 'Redux', 'NodeJS', 'SASS', 'Gulp', 'Grunt', 'Webpack']
 };
 
 var Header = function Header(props) {
@@ -236,7 +274,9 @@ var AddOption = function (_React$Component2) {
         return { error: error };
       });
 
-      e.target.elements.optionValue.value = '';
+      if (!error) {
+        e.target.elements.optionValue.value = '';
+      }
     }
   }, {
     key: 'render',
