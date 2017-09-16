@@ -1,12 +1,11 @@
 import React from 'react';
 import Option from './Option';
 
-import {buttonStyle} from '../styles/styles';
 
 const Options =(props)=>{
   return(
     <div>
-      <button style={buttonStyle} onClick={props.handleDeleteOptions}>
+      <button onClick={props.handleDeleteOptions}>
         {props.options.length > 0 ? 'Remove All' : 'No options to remove'}
       </button>
       {

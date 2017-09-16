@@ -4,63 +4,19 @@ import Options from './Options';
 import Action from './Action';
 import AddOption from './AddOption';
 
-// Styles
-import {wrapperStyle} from '../styles/styles';
 
 class IndecisionApp extends React.Component{
-  constructor(props){
-    super(props)
-    this.handleDeleteOptions = this.handleDeleteOptions.bind(this);
-    this.handleAddOption = this.handleAddOption.bind(this);
-    this.handlePickOptions = this.handlePickOptions.bind(this);
-    this.handleDeleteOption = this.handleDeleteOption.bind(this);
-    this.state = {
-      options: []
-    } 
+  state = {
+    options:[]
   }
 
-  componentDidMount(){
-
-    try{
-      //Run the code below when componentDidMount
-        const json = localStorage.getItem('options');
-        const options = JSON.parse(json);
-
-        // Only change the state if the options array is not empty
-        if(options){
-          this.setState(()=>{
-            return{
-              options:options
-            }
-          })
-        }
-      //When there are errors when the code ran, catch will take effect
-    }catch(e){
-      //In this application, do nothing
-      //Just revert the options to being an empty array;
-    }
-
-  }
-
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.options.length !== this.state.options.length){
-      const json = JSON.stringify(this.state.options);
-      localStorage.setItem('options', json)
-    }
-    
-  }
-
-  componentWillUnmount(){
-    console.log('The component unmounted');
-    //localStorage.removeItem('options');
-  }
-  handlePickOptions(){
+  handlePickOptions = ()=> {
     let randomOption = Math.floor(Math.random()* this.state.options.length);
     alert([this.state.options[randomOption]]);
     let pickedOption = this.state.options[randomOption];
   }
 
-  handleDeleteOptions (){
+  handleDeleteOptions = ()=>{
     this.setState(()=>({options:[]}))
   }
 
@@ -72,7 +28,7 @@ class IndecisionApp extends React.Component{
     })
   }
 
-  handleAddOption (optionValue){
+  handleAddOption = (optionValue)=>{
     let optionLowerCased = this.state.options.map((option)=> option.toLowerCase());
     if(!optionValue){
       return 'You need to add an option';
@@ -85,10 +41,45 @@ class IndecisionApp extends React.Component{
     }))
   }
 
+  componentDidMount(){
+    
+        try{
+          //Run the code below when componentDidMount
+            const json = localStorage.getItem('options');
+            const options = JSON.parse(json);
+    
+            // Only change the state if the options array is not empty
+            if(options){
+              this.setState(()=>{
+                return{
+                  options:options
+                }
+              })
+            }
+          //When there are errors when the code ran, catch will take effect
+        }catch(e){
+          //In this application, do nothing
+          //Just revert the options to being an empty array;
+        }
+    
+      }
+    
+      componentDidUpdate(prevProps, prevState){
+        if(prevState.options.length !== this.state.options.length){
+          const json = JSON.stringify(this.state.options);
+          localStorage.setItem('options', json)
+        }
+        
+      }
+    
+      componentWillUnmount(){
+        console.log('The component unmounted');
+        //localStorage.removeItem('options');
+      }
   render(){
     const subtitle="Putting your life in the hands of a computer!";
     return (
-      <div style={wrapperStyle}>
+      <div>
         <Header subtitle={subtitle}/>
         <h3>{this.state.options.length ? `Tasks: ${this.state.options.length}` : ''}</h3>
         <Action 
