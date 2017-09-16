@@ -323,7 +323,7 @@ var Option = function Option(props) {
       props.optionText,
       React.createElement(
         'button',
-        { style: { backgroundColor: 'red', transform: 'scaleX(1.2)', marginLeft: '15px', color: 'white' }, onClick: function onClick(e) {
+        { style: { backgroundColor: '#d42150', transform: 'scaleX(1.2)', marginLeft: '15px', color: 'white' }, onClick: function onClick(e) {
             return props.handleDeleteOption(props.optionText);
           } },
         'remove'
