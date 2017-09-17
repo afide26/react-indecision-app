@@ -89,10 +89,9 @@ class IndecisionApp extends React.Component{
         //localStorage.removeItem('options');
       }
   render(){
-    const subtitle="Putting your life in the hands of a computer!";
     return (
       <div>
-        <Header subtitle={subtitle}/>
+        <Header/>
         <h3>{this.state.options.length ? `Tasks: ${this.state.options.length}` : ''}</h3>
         <Action 
           hasOptions={this.state.options.length > 0} 

@@ -1,0 +1,17 @@
+$appFont: 'Helvetica', 'Arial', sans-serif;
+$appFontColor: #065880;
+
+html{
+  //base 10
+  font-size: 62.5%;
+}
+
+body{
+  font-family: $appFont;
+  font-size: 1.6rem;
+  margin: 0 auto;
+}
+
+h1{
+  font-size: 3rem;
+}
